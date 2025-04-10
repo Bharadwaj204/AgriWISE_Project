@@ -3,7 +3,6 @@ pandas
 numpy
 scikit-learn
 matplotlib
-sqlite3
 openai
 requests
 beautifulsoup4
