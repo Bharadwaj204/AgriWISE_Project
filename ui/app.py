@@ -36,42 +36,44 @@ pesticide = st.slider("Pesticide Usage (kg)", 0, 50)
 
 # 🔍 Run AI Prediction
 if st.button("Run AgriWISE AI") and farm_id:
-    # Ensure model exists (train if needed)
-    get_model()
+    # Display "Running..." message
+    with st.spinner("🚜 Running AgriWISE AI... Please wait..."):
+        # Ensure model exists (train if needed)
+        get_model()
 
-    # Input as list
-    input_list = [soil_ph, moisture, temperature, rainfall, fertilizer, pesticide]
+        # Input as list
+        input_list = [soil_ph, moisture, temperature, rainfall, fertilizer, pesticide]
 
-    # ML Prediction
-    predicted_yield = predict_yield(input_list)
+        # ML Prediction
+        predicted_yield = predict_yield(input_list)
 
-    # Agent 1: Crop Recommendation
-    recommended_crop = recommend_crop(soil_ph, moisture, temperature, rainfall)
+        # Agent 1: Crop Recommendation
+        recommended_crop = recommend_crop(soil_ph, moisture, temperature, rainfall)
 
-    # Agent 2: Market Suggestion
-    market_df = recommend_crops()
-    market_crop = market_df.iloc[0]['Product'] if not market_df.empty else "N/A"
+        # Agent 2: Market Suggestion
+        market_df = recommend_crops()
+        market_crop = market_df.iloc[0]['Product'] if not market_df.empty else "N/A"
 
-    # Agent 3: Weather Status
-    weather_status = check_planting_condition(temperature, rainfall)
+        # Agent 3: Weather Status
+        weather_status = check_planting_condition(temperature, rainfall)
 
-    # Agent 4: Sustainability Score
-    score = calculate_sustainability(fertilizer, pesticide, rainfall, predicted_yield)
+        # Agent 4: Sustainability Score
+        score = calculate_sustainability(fertilizer, pesticide, rainfall, predicted_yield)
 
-    # Save to DB
-    today = str(date.today())
-    insert_result(farm_id, recommended_crop, market_crop, weather_status, score, today)
+        # Save to DB
+        today = str(date.today())
+        insert_result(farm_id, recommended_crop, market_crop, weather_status, score, today)
 
-    # Display Results
-    st.metric(label="🌾 Predicted Crop Yield (tons)", value=predicted_yield)
-    st.success(f"✅ Recommended Crop: **{recommended_crop}**")
-    st.info(f"📈 Market Preferred Crop: **{market_crop}**")
-    st.warning(f"🌦️ Weather Advice: **{weather_status}**")
-    st.metric(label="♻️ Sustainability Score", value=score)
+        # Display Results
+        st.metric(label="🌾 Predicted Crop Yield (tons)", value=predicted_yield)
+        st.success(f"✅ Recommended Crop: **{recommended_crop}**")
+        st.info(f"📈 Market Preferred Crop: **{market_crop}**")
+        st.warning(f"🌦️ Weather Advice: **{weather_status}**")
+        st.metric(label="♻️ Sustainability Score", value=score)
 
-    st.markdown("---")
-    st.subheader("📊 Market Insights")
-    st.dataframe(market_df)
+        st.markdown("---")
+        st.subheader("📊 Market Insights")
+        st.dataframe(market_df)
 
 else:
     st.info("👈 Fill in the details and click **Run AgriWISE AI** to get suggestions.")
